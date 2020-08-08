@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router'
-import { CalendarIcon, LocationIcon } from '@primer/octicons-react';
+import { CalendarIcon, LocationIcon, ChevronRightIcon, ChevronLeftIcon } from '@primer/octicons-react';
 import styled from 'styled-components';
-import Router from 'next/router'
 import { createGlobalStyle } from 'styled-components';
 
 const theme = {
@@ -24,7 +23,7 @@ const GlobalStyle = createGlobalStyle`
     a {
         text-decoration: none;
         color: #1DB954;
-        font-family: ${theme.fonts.mono};
+        font-family: ${theme.fonts.inter};
     }
 
     a:hover {
@@ -46,7 +45,7 @@ const GlobalStyle = createGlobalStyle`
             min-width: 825px;
             color: #1DB954;
             font-size: 0.75rem;
-            font-family: ${theme.fonts.mono};
+            font-family: ${theme.fonts.inter};
             text-decoration: underline;
         }
 
@@ -65,7 +64,7 @@ const GlobalStyle = createGlobalStyle`
             font-weight: 700;
             display: block;
             margin-left: 5px;
-            font-family: ${theme.fonts.mono};
+            font-family: ${theme.fonts.inter};
             text-transform: lowercase;
         }
         
@@ -74,7 +73,7 @@ const GlobalStyle = createGlobalStyle`
             margin: 45px auto;
             background: #222629;
             padding: 10px 15px;
-            min-width: 825px;
+            min-width: 900px;
             border-radius: 10px;
         }
 
@@ -95,11 +94,39 @@ const GlobalStyle = createGlobalStyle`
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 1);
         }
 
+        figure.book a {
+            color: #ddd;
+            letter-spacing: none;
+            font-family: ${theme.fonts.inter};
+            text-decoration: none;
+        }
+
         figcaption.title {
             display: table-caption;
             caption-side: bottom;
             font-size: 0.75rem;
             margin-top: 2.5px;
+        }
+
+        div.container button {
+            border: none;
+            background: transparent;
+            color: #fff;
+            margin-top: 3.5rem;
+            outline: none;
+        }
+
+        div.container button.left-button {
+            float: left; 
+        }
+
+        div.container button.right-button { 
+            float: right; 
+        }
+
+        div.shelf div#link-container {
+           text-align: center;  
+           margin: 20px 10px 0;
         }
     }
 `
@@ -271,21 +298,43 @@ const User = () => {
     const [friendsCount, setFriendsCount] = useState(null);
     const [shelfNames, setShelfNames] = useState(null); 
     const [shelfCounts, setShelfCounts] = useState(null);
+    const [shelfLinks, setShelfLinks] = useState(null);
+    const [pageNumber, setPageNumber] = useState([1, 1, 1]); 
     const [allShelves, setAllShelves] = useState([]);
     const [error, setError] = useState({ active: false, type: 200 }); // must add condition for errors or invalid id numbers
 
     // lists
     var shelfNamesTemp = [];
     var shelfCountsTemp = [];
+    var shelfLinksTemp = [];
     var allShelvesTemp = [];
 
-    const getNewPage = (i) => {        
+    const getNewPage = (i, action) => {    
+        // vars for updating state 
+        const clone = [...allShelves]; 
+
+        // update page number 
+        if (action == 'next') {
+            const newNumber = pageNumber[i] + 1;
+            var stringNumber = newNumber.toString(); 
+            const pageNumberClone = [...pageNumber]; 
+            pageNumberClone[i] = newNumber; 
+            setPageNumber(pageNumberClone); 
+        } else if (action === 'back') {
+            const newNumber = pageNumber[i] - 1;
+            var stringNumber = newNumber.toString(); 
+            const pageNumberClone = [...pageNumber]; 
+            pageNumberClone[i] = newNumber; 
+            setPageNumber(pageNumberClone); 
+        }
+
+        // vars for extacting data from api response
         var bookData = [];
         var shelfItems = [];
         var bookTitle;
         var bookImage; 
         var bookLink;
-        fetch(`https://cors-anywhere.herokuapp.com/https://www.goodreads.com/review/list/${query}.xml?key=${apiKey}&v=2&shelf=${shelfNames[i]}&page=2&per_page=5`)
+        fetch(`https://cors-anywhere.herokuapp.com/https://www.goodreads.com/review/list/${query}.xml?key=${apiKey}&v=2&shelf=${shelfNames[i]}&page=${stringNumber}&per_page=5`)
             .then(response => response.text())
             .then((response) => {
                 if (response.status === 404) {
@@ -298,14 +347,15 @@ const User = () => {
                 var result = convert.xml2json(response, {compact: false, spaces: 4});
                 var parsedData = JSON.parse(result);
 
-                if (parsedData.elements['0'].elements['2'].elements.length !== 0) {
-                    var extractedName = parsedData.elements['0'].elements['1'].attributes['name'];
-                    var extractedCount = parsedData.elements['0'].elements['2'].attributes['total'];
-                    var extractedBooks = parsedData.elements['0'].elements['2'].elements;
-                    shelfNamesTemp.push(extractedName);
-                    shelfCountsTemp.push(extractedCount);
+                console.log(parsedData);
 
-                    if (extractedCount >= 5) {
+                if (parsedData.elements['0'].elements['2'].elements.length !== 0) {
+                    console.log("test"); 
+                    var extractedCount = parsedData.elements['0'].elements['2'].attributes['end'] - parsedData.elements['0'].elements['2'].attributes['start'];
+                    console.log(extractedCount); 
+                    var extractedBooks = parsedData.elements['0'].elements['2'].elements;
+
+                    if (extractedCount == 4) {
                         for (var j = 0; j < 5; j++) {
                             var bookIndex = j.toString();
                             var bookInfo = extractedBooks[bookIndex].elements['1'];
@@ -314,6 +364,8 @@ const User = () => {
                             bookImage = bookInfo.elements['7'].elements['0']['text'];
                             bookLink = bookInfo.elements['10'].elements['0']['text'];
     
+                            bookTitle = truncate(bookTitle, 25); 
+
                             bookData.push(bookTitle);
                             bookData.push(bookImage);
                             bookData.push(bookLink);
@@ -322,7 +374,7 @@ const User = () => {
                             bookData = []; //clear list
                         }
                     } else {
-                        for (var j = 0; j < extractedCount; j++) {
+                        for (var j = 0; j < extractedCount + 1; j++) {
                             var bookIndex = j.toString();
                             var bookInfo = extractedBooks[bookIndex].elements['1'];
     
@@ -330,6 +382,8 @@ const User = () => {
                             bookImage = bookInfo.elements['7'].elements['0']['text'];
                             bookLink = bookInfo.elements['10'].elements['0']['text'];
     
+                            bookTitle = truncate(bookTitle, 25); 
+
                             bookData.push(bookTitle);
                             bookData.push(bookImage);
                             bookData.push(bookLink);
@@ -338,10 +392,10 @@ const User = () => {
                             bookData = []; //clear list
                         }
                     }
-                    allShelves[i] = shelfItems; 
-                    console.log(allShelves); 
+                    clone[i] = shelfItems; 
+                    console.log(clone); 
 
-                    setAllShelves(allShelves)
+                    setAllShelves(clone); 
 
                     shelfItems = []; //clear list
                 }
@@ -415,8 +469,10 @@ const User = () => {
                     var extractedName = parsedData.elements['0'].elements['1'].attributes['name'];
                     var extractedCount = parsedData.elements['0'].elements['2'].attributes['total'];
                     var extractedBooks = parsedData.elements['0'].elements['2'].elements;
+                    var shelfLink = "https://www.goodreads.com/review/list/" + query + "?shelf=" + extractedName;
                     shelfNamesTemp.push(extractedName);
                     shelfCountsTemp.push(extractedCount);
+                    shelfLinksTemp.push(shelfLink); 
 
                     if (extractedCount >= 5) {
                         for (var j = 0; j < 5; j++) {
@@ -426,6 +482,8 @@ const User = () => {
                             bookTitle = bookInfo.elements['5'].elements['0']['text'];
                             bookImage = bookInfo.elements['7'].elements['0']['text'];
                             bookLink = bookInfo.elements['10'].elements['0']['text'];
+
+                            bookTitle = truncate(bookTitle, 25); 
     
                             bookData.push(bookTitle);
                             bookData.push(bookImage);
@@ -442,6 +500,8 @@ const User = () => {
                             bookTitle = bookInfo.elements['5'].elements['0']['text'];
                             bookImage = bookInfo.elements['7'].elements['0']['text'];
                             bookLink = bookInfo.elements['10'].elements['0']['text'];
+
+                            bookTitle = truncate(bookTitle, 25); 
     
                             bookData.push(bookTitle);
                             bookData.push(bookImage);
@@ -464,6 +524,11 @@ const User = () => {
         }
         setShelfNames(shelfNamesTemp);
         setShelfCounts(shelfCountsTemp);
+        setShelfLinks(shelfLinksTemp);
+    };
+
+    function truncate(str, n){
+        return (str.length > n) ? str.substr(0, n-1) + '...' : str;
     };
 
     useEffect(() => {
@@ -513,12 +578,18 @@ const User = () => {
             <div id="shelf-data">
                 <div class="shelf-header"><h1>{name}'s Shelves</h1></div>
                 {allShelves.map((shelf, i) =>
-                    <div key={i} id={shelfNames[i]} class="shelf"> <div class="books-container"> <h2>{shelfNames[i]} <span>{shelfCounts[i]} books on this shelf</span></h2> <div class="container">{shelf.map((book, j) => 
+                    <div key={i} id={shelfNames[i]} class="shelf"> <div class="books-container">    <h2>
+                                                                                                        {shelfNames[i]} 
+                                                                                                        {shelfCounts[i] > 5 && pageNumber[i] != (shelfCounts[i] / 5).toFixed() && <span>{(pageNumber[i] - 1) * 5 + 1}-{(pageNumber[i]) * 5} of {shelfCounts[i]} books</span>}
+                                                                                                        {shelfCounts[i] > 5 && pageNumber[i] >= (shelfCounts[i] / 5).toFixed() && <span>{(pageNumber[i] - 1) * 5 + 1}-{shelfCounts[i]} of {shelfCounts[i]} books</span>} 
+                                                                                                        {shelfCounts[i] <= 5 && <span>{(pageNumber[i] - 1) * 5 + 1}-{shelfCounts[i]} of {shelfCounts[i]} books</span>}
+                                                                                                    </h2> 
+                        <div class="container"> {pageNumber[i] > 1 && <button class="left-button" id={i} onClick={() => getNewPage(i, 'back')}><ChevronLeftIcon size="medium"></ChevronLeftIcon></button> } {shelf.map((book, j) => 
                             <figure class="book">
                                 <a href={book[2]}><img src={book[1]}></img></a>
-                                <figcaption class="title">{book[0]}</figcaption>
+                                <figcaption class="title"><a href={book[2]}>{book[0]}</a></figcaption>
                             </figure>
-                        )} <button id={i} onClick={() => getNewPage(i)}>Click me!</button> </div></div> 
+                        )} {shelfCounts[i] > 5 && pageNumber[i] < (shelfCounts[i] / 5).toFixed() && <button class="right-button" id={i} onClick={() => getNewPage(i, 'next')}><ChevronRightIcon size="medium"></ChevronRightIcon></button> }  </div><div id="link-container"><span id="shelf-link"><a href={shelfLinks[i]}>See shelf on GoodReads</a></span></div></div>  
                     </div>
                 )} 
             </div>
