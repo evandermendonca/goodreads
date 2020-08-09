@@ -4,26 +4,19 @@ import { CalendarIcon, LocationIcon, ChevronRightIcon, ChevronLeftIcon } from '@
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
 
-const theme = {
-    fonts: {
-      inter: 'Inter, system, -apple-system, BlinkMacSystemFont, Roboto, Segoe UI, Arial, sans-serif',
-      mono: 'SF Mono, Fira Code, Fira Mono, Roboto Mono, Lucida Console, Monaco, monospace',
-    },
-};
-
 const GlobalStyle = createGlobalStyle`
     body {
         margin: 0;
         padding: 0;
         background: #121212;
         color: #ddd;
-        font-family: ${theme.fonts.inter};
+        font-family: 'Inter', 'system', '-apple-system', 'BlinkMacSystemFont', 'Roboto', 'Segoe UI', 'Arial', 'sans-serif';
     }
 
     a {
         text-decoration: none;
-        color: #1DB954;
-        font-family: ${theme.fonts.inter};
+        color: rgb(124, 124, 225);
+        font-family: 'Inter', 'system', '-apple-system', 'BlinkMacSystemFont', 'Roboto', 'Segoe UI', 'Arial', 'sans-serif';
     }
 
     a:hover {
@@ -40,13 +33,25 @@ const GlobalStyle = createGlobalStyle`
         padding: 20px;
 
         .shelf-header {
-            width: 50%;
-            margin: 10px auto 0 auto;
-            min-width: 825px;
-            color: #1DB954;
-            font-size: 0.75rem;
-            font-family: ${theme.fonts.inter};
-            text-decoration: underline;
+            padding: 10px 15px;
+            margin: 0 auto;
+            max-width: 900px;
+            color: #772ce8;
+            text-decoration: none;
+            font-weight: 300;
+
+            @media (max-width: 700px) {
+                min-width: 90%;
+            }
+        }
+
+        .shelf-header h1 {
+            font-weight: 300;
+            margin: 0;
+
+            @media (max-width: 700px) {
+                font-size: 1.75rem; 
+            }
         }
 
         h2 {
@@ -60,21 +65,27 @@ const GlobalStyle = createGlobalStyle`
         
         h2 span {
             font-size: 1rem;
-            color: #1DB954;
-            font-weight: 700;
+            color: #D3D3D3;
+            font-weight: 300;
             display: block;
             margin-left: 5px;
-            font-family: ${theme.fonts.inter};
+            font-family: 'Inter', 'system', '-apple-system', 'BlinkMacSystemFont', 'Roboto', 'Segoe UI', 'Arial', 'sans-serif';
             text-transform: lowercase;
         }
         
         div.shelf {
-            width: 50%;
-            margin: 45px auto;
+            margin-left: auto;
+            margin-right: auto; 
+            margin-top: 25px;
+            margin-bottom: 45px;
             background: #222629;
             padding: 10px 15px;
-            min-width: 900px;
+            max-width: 900px;
             border-radius: 10px;
+        
+            @media (max-width: 700px) {
+                min-width: 90%;
+            }
         }
 
         .container {
@@ -88,16 +99,27 @@ const GlobalStyle = createGlobalStyle`
             display: inline-table;
             margin: 0 25px;
             text-align: center;
+
+            @media (max-width: 700px) {
+                display: block; 
+                margin: 15px 0;
+                text-align: left;
+            }
         }
 
         figure.book img {
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 1);
+
+            @media (max-width: 700px) {
+                height: 70%; 
+                width: 70%; 
+            }
         }
 
         figure.book a {
             color: #ddd;
             letter-spacing: none;
-            font-family: ${theme.fonts.inter};
+            font-family: 'Inter', 'system', '-apple-system', 'BlinkMacSystemFont', 'Roboto', 'Segoe UI', 'Arial', 'sans-serif';
             text-decoration: none;
         }
 
@@ -113,26 +135,59 @@ const GlobalStyle = createGlobalStyle`
             background: transparent;
             color: #fff;
             margin-top: 3.5rem;
+            padding: 7.5px;
             outline: none;
+
+            @media (max-width: 700px) {
+                margin-top: 0px; 
+            }
         }
 
         div.container button.left-button {
             float: left; 
+
+            @media (max-width: 700px) {
+                float: none; 
+            }
         }
 
         div.container button.right-button { 
             float: right; 
+
+            @media (max-width: 700px) {
+                float: none; 
+            }
+        }
+
+        div.container button.right-button:hover { 
+            background: rgba(255,255,255,.05);
+            border-radius: 5px;   
+            text-decoration: none;
+        }
+
+        div.container button.left-button:hover { 
+            background: rgba(255,255,255,.05);
+            border-radius: 5px;   
+            text-decoration: none;
         }
 
         div.shelf div#link-container {
            text-align: center;  
-           margin: 20px 10px 0;
+           margin-top: 20px; 
+           margin-bottom: 15px;
+        }
+
+        div.shelf div#link-container a:hover {
+            padding: 7.5px;  
+            background: rgba(255,255,255,.05);
+            border-radius: 5px;   
+            text-decoration: none;
         }
     }
 `
 
 const StyledContainer = styled.div`
-    font-family: ${theme.fonts.inter};
+    font-family: 'Inter', 'system', '-apple-system', 'BlinkMacSystemFont', 'Roboto', 'Segoe UI', 'Arial', 'sans-serif';
     height: 50vh;
     background-color: #000000;
     padding: 3rem 5rem 15rem;
@@ -144,29 +199,6 @@ const StyledContainer = styled.div`
         padding: 0;
         margin: 0;
         height: 100%;
-    }
-
-    div#git-link {
-        svg#square {
-            position: absolute;
-            fill: #1DB954;
-            top: 0;
-            right: 0;
-        }
-
-        svg#octicat {
-            transform: rotate(45deg);
-        }
-
-        a {
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            border-width: 0px;
-            border-style: initial;
-            border-color: initial;
-            border-image: initial;
-        }
     }
 
     div#profile-card {
@@ -215,6 +247,7 @@ const StyledContainer = styled.div`
         div#profile-link {
             padding: 0.75rem;
             font-size: 1.5rem;
+            padding-top: 0.25rem;
 
             @media (max-width: 500px) {
                 font-size: 1.25rem;
@@ -589,7 +622,7 @@ const User = () => {
                                 <a href={book[2]}><img src={book[1]}></img></a>
                                 <figcaption class="title"><a href={book[2]}>{book[0]}</a></figcaption>
                             </figure>
-                        )} {shelfCounts[i] > 5 && pageNumber[i] < (shelfCounts[i] / 5).toFixed() && <button class="right-button" id={i} onClick={() => getNewPage(i, 'next')}><ChevronRightIcon size="medium"></ChevronRightIcon></button> }  </div><div id="link-container"><span id="shelf-link"><a href={shelfLinks[i]}>See shelf on GoodReads</a></span></div></div>  
+                        )} {shelfCounts[i] > 5 && pageNumber[i] < (shelfCounts[i] / 5).toFixed() && <button class="right-button" id={i} onClick={() => getNewPage(i, 'next')}><ChevronRightIcon size="medium"></ChevronRightIcon></button> }  </div><div id="link-container"><span id="shelf-link"><a href={shelfLinks[i]}>See shelf on GoodReads <ChevronRightIcon size="small"></ChevronRightIcon></a></span></div></div>  
                     </div>
                 )} 
             </div>
