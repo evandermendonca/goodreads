@@ -586,7 +586,7 @@ const User = () => {
         <main>
             <head>
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <title>{`${name ? `GoodReads | ${name}` : 'GoodReads'}`}</title>
+                <title>{`${name ? `Goodreads | ${name}` : 'Goodreads'}`}</title>
             </head>
 
             <GlobalStyle/>
@@ -635,7 +635,7 @@ const User = () => {
                                 <a href={book[2]}><img src={book[1]}></img></a>
                                 <figcaption class="title"><a href={book[2]}>{book[0]}</a></figcaption>
                             </figure>
-                        )} {shelfCounts[i] > 5 && pageNumber[i] < (shelfCounts[i] / 5).toFixed() && <button class="right-button" id={i} onClick={() => getNewPage(i, 'next')}><ChevronRightIcon size="medium"></ChevronRightIcon></button> }  </div><div id="link-container"><span id="shelf-link"><a href={shelfLinks[i]}>See shelf on GoodReads <ChevronRightIcon size="small"></ChevronRightIcon></a></span></div></div>  
+                        )} {shelfCounts[i] > 5 && pageNumber[i] < (shelfCounts[i] / 5).toFixed() && <button class="right-button" id={i} onClick={() => getNewPage(i, 'next')}><ChevronRightIcon size="medium"></ChevronRightIcon></button> }  </div><div id="link-container"><span id="shelf-link"><a href={shelfLinks[i]}>See shelf on Goodreads <ChevronRightIcon size="small"></ChevronRightIcon></a></span></div></div>  
                     </div>
                 )} 
             </div>
