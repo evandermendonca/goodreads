@@ -184,6 +184,19 @@ const GlobalStyle = createGlobalStyle`
             text-decoration: none;
         }
     }
+
+    div#footer {
+        margin: 0 auto;
+        padding: 25px;
+        width: 80%;
+        text-align: center;
+        padding-top: 0px;
+    }
+
+    div#footer span {
+        display: block;
+        margin-bottom: 10px;
+    }
 `
 
 const StyledContainer = styled.div`
@@ -625,6 +638,15 @@ const User = () => {
                         )} {shelfCounts[i] > 5 && pageNumber[i] < (shelfCounts[i] / 5).toFixed() && <button class="right-button" id={i} onClick={() => getNewPage(i, 'next')}><ChevronRightIcon size="medium"></ChevronRightIcon></button> }  </div><div id="link-container"><span id="shelf-link"><a href={shelfLinks[i]}>See shelf on GoodReads <ChevronRightIcon size="small"></ChevronRightIcon></a></span></div></div>  
                     </div>
                 )} 
+            </div>
+
+            <div id="footer">
+                <span>
+                    Created with <a href="https://nextjs.org/">Next.js</a> · <a href="https://styled-components.com/">Styled Components</a> · <a href="https://www.goodreads.com/api">Goodreads API</a> and more by <a href="">Evander Mendonça</a>
+                </span>
+                <span>
+                    View more at <a href="https://github.com/evandermendonca/goodreads">github/evandermendonca</a>
+                </span>
             </div>
         </main>
     );
